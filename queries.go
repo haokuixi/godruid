@@ -100,6 +100,7 @@ type SearchItem struct {
 type DimValue struct {
 	Dimension string `json:"dimension"`
 	Value     string `json:"value"`
+	Count     int    `json:"count"`
 }
 
 func (q *QuerySearch) setup()             { q.QueryType = SEARCH }
