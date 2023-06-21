@@ -13,10 +13,10 @@ const (
 )
 
 type Client struct {
-	Url      string
-	EndPoint string
-	Username string
-	Password string
+	Url       string
+	EndPoint  string
+	Username  string
+	Password  string
 	BasicAuth bool
 
 	Debug        bool
@@ -65,7 +65,7 @@ func (c *Client) QueryRaw(req []byte) (result []byte, err error) {
 	request.Header.Set("Content-Type", "application/json")
 
 	if c.BasicAuth {
-		c.HttpClient.SetBasicAuth(c.Username, c.Password)
+		request.SetBasicAuth(c.Username, c.Password)
 	}
 	resp, err := c.HttpClient.Do(request)
 	if err != nil {
