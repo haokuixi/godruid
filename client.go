@@ -15,6 +15,9 @@ const (
 type Client struct {
 	Url      string
 	EndPoint string
+	Username string
+	Password string
+	BasicAuth bool
 
 	Debug        bool
 	LastRequest  string
@@ -22,7 +25,7 @@ type Client struct {
 	HttpClient   *http.Client
 }
 
-func (c *Client) Query(query Query, authToken string) (err error) {
+func (c *Client) Query(query Query) (err error) {
 	query.setup()
 	var reqJson []byte
 	if c.Debug {
@@ -34,7 +37,7 @@ func (c *Client) Query(query Query, authToken string) (err error) {
 		return
 	}
 
-	result, err := c.QueryRaw(reqJson, authToken)
+	result, err := c.QueryRaw(reqJson)
 	if err != nil {
 		return
 	}
@@ -42,7 +45,7 @@ func (c *Client) Query(query Query, authToken string) (err error) {
 	return query.onResponse(result)
 }
 
-func (c *Client) QueryRaw(req []byte, authToken string) (result []byte, err error) {
+func (c *Client) QueryRaw(req []byte) (result []byte, err error) {
 	if c.EndPoint == "" {
 		c.EndPoint = DefaultEndPoint
 	}
@@ -60,14 +63,10 @@ func (c *Client) QueryRaw(req []byte, authToken string) (result []byte, err erro
 		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/json")
-	if authToken != "" {
-		cookie := &http.Cookie{
-			Name:  "skylight-aaa",
-			Value: authToken,
-		}
-		request.AddCookie(cookie)
-	}
 
+	if c.BasicAuth {
+		c.HttpClient.SetBasicAuth(c.Username, c.Password)
+	}
 	resp, err := c.HttpClient.Do(request)
 	if err != nil {
 		return nil, err

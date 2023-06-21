@@ -1,3 +1,3 @@
-module github.com/fannheyward/godruid
+module github.com/haokuixi/godruid
 
 go 1.12
